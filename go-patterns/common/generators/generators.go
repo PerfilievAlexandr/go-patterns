@@ -2,6 +2,7 @@ package generators
 
 import (
 	"context"
+	"time"
 )
 
 func RepeatGenerator(ctx context.Context, values ...int) <-chan int {
@@ -52,6 +53,24 @@ func TakeGenerator(ctx context.Context, inputCh <-chan int, count int) <-chan in
 			select {
 			case <-ctx.Done():
 			case result <- <-inputCh:
+			}
+		}
+	}()
+
+	return result
+}
+
+func SleepGenerator(ctx context.Context, inputCh <-chan int, duration time.Duration) <-chan int {
+	result := make(chan int)
+
+	go func() {
+		defer close(result)
+
+		for {
+			select {
+			case <-ctx.Done():
+			case <-time.After(duration):
+				result <- <-inputCh
 			}
 		}
 	}()
