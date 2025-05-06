@@ -26,11 +26,11 @@ func main() {
 	wg.Wait()
 }
 
-func funOut(ctx context.Context, inChan <-chan int, chanNum int) []<-chan int {
-	result := make([]<-chan int, 0, chanNum)
+func funOut[T any](ctx context.Context, inChan <-chan T, chanNum int) []<-chan T {
+	result := make([]<-chan T, 0, chanNum)
 
 	for i := 0; i < chanNum; i++ {
-		resultChan := make(chan int)
+		resultChan := make(chan T)
 		result = append(result, resultChan)
 
 		go func() {

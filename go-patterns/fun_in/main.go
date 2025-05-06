@@ -41,20 +41,19 @@ func funIn(ctx context.Context, channels ...<-chan int) <-chan int {
 	result := make(chan int)
 	wg := sync.WaitGroup{}
 
-	multiplex := func(ch <-chan int) {
-		defer wg.Done()
-		for val := range ch {
-			select {
-			case <-ctx.Done():
-				return
-			case result <- val:
-			}
-		}
-	}
-
 	wg.Add(len(channels))
 	for _, channel := range channels {
-		go multiplex(channel)
+		go func(c <-chan int) {
+			defer wg.Done()
+
+			for val := range channel {
+				select {
+				case <-ctx.Done():
+					return
+				case result <- val:
+				}
+			}
+		}(channel)
 	}
 
 	go func() {

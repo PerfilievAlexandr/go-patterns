@@ -26,8 +26,8 @@ import (
 //	wg.Wait()
 //}
 
-func OrDone(ctx context.Context, ch <-chan int) <-chan int {
-	result := make(chan int)
+func OrDone[T any](ctx context.Context, ch <-chan T) <-chan T {
+	result := make(chan T)
 
 	go func() {
 		defer close(result)

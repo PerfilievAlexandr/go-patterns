@@ -29,14 +29,14 @@ func treeChan(ctx context.Context, inChan <-chan int) (<-chan int, <-chan int) {
 		}()
 
 		for inVal := range ordone.OrDone(ctx, inChan) {
-			var outCh1, outCh2 = outCh1, outCh2
+			var outCh1Tmp, outCh2Tmp = outCh1, outCh2
 			for i := 0; i < 2; i++ {
 				select {
 				case <-ctx.Done():
-				case outCh1 <- inVal:
-					outCh1 = nil
-				case outCh2 <- inVal:
-					outCh2 = nil
+				case outCh1Tmp <- inVal:
+					outCh1Tmp = nil
+				case outCh2Tmp <- inVal:
+					outCh2Tmp = nil
 				}
 			}
 		}
